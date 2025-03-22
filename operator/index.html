@@ -1,17 +1,17 @@
+
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Стержневой логистика</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
     <div class="container">
         <h1>НЛЗ. Стежневой участок. АРМ Оператора сборки.</h1>
         <p id="outputText"></p>
+        <button id="exportOperatorBtn">Экспорт моих заданий (CSV)</button>
     </div>
     <h2>Выбрать РМ сборки:</h2>
     <div class="operator_list">
@@ -22,12 +22,10 @@
     </div>
     <h2>Блоки для сборки:</h2>
     <div class="block_list">
-
         <div class='block' value="A274">A274</div>
         <div class='block' value="4216">4216</div>
         <div class='block' value="240">240</div>
     </div>
-
     <h2>Стержни для поставки:</h2>
     <div class="tara">
         <div class='num_st 4216' id='1'>1</div>
@@ -41,8 +39,7 @@
         <div class='num_st 4216' id='9'>9</div>
         <div class='num_st 4216' id='10'>10</div>
     </div>
-
     <script src="script.js"></script>
 </body>
-
 </html>
+

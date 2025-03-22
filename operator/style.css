@@ -63,3 +63,58 @@
     background: #f8d7da;
     border-left: 4px solid #dc3545;
 }
+.task-item.driver {
+    background: #e9f5ff;
+}
+
+.complete-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#exportBtn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #17a2b8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.operator_list, .block_list, .tara {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.operator, .block, .num_st {
+    padding: 10px 15px;
+    border: 2px solid #4CAF50;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.selected {
+    background-color: #4CAF50 !important;
+    color: white;
+}
+
+#exportOperatorBtn {
+    margin: 20px 0;
+    padding: 10px 20px;
+    background: #17a2b8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
