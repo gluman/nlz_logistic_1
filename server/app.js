@@ -1,7 +1,8 @@
 const express = require('express');
-const cors = require('cors'); // Добавлен CORS
+const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const { stringify } = require('csv-stringify'); // Для записи в CSV
 const app = express();
 const PORT = 3000;
 
@@ -10,11 +11,14 @@ app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PATCH', 'DELETE']
 }));
-app.options('*', cors()); // Обработка предварительных запросов
+app.options('*', cors());
 
 app.use(express.static(path.join(__dirname, '../operator')));
 app.use(express.static(path.join(__dirname, '../driver')));
 app.use(express.json());
+
+// Загрузка настроек времени
+const timeSettings = JSON.parse(fs.readFileSync('timeSettings.json'));
 
 // Ежедневный бэкап
 function backupTasks() {
@@ -33,10 +37,31 @@ try {
   fs.writeFileSync('tasks.json', '[]');
 }
 
+// Запись задач в CSV
+function saveTasksToCSV() {
+  const csvFilePath = path.join(__dirname, 'tasks.csv');
+  const columns = [
+    { key: 'block', header: 'Блок' },
+    { key: 'rod', header: 'Стержень' },
+    { key: 'operator', header: 'РМ' },
+    { key: 'timestamp', header: 'Время создания' },
+    { key: 'status', header: 'Статус' },
+    { key: 'completedAt', header: 'Время завершения' }
+  ];
+
+  const writableStream = fs.createWriteStream(csvFilePath);
+  const stringifier = stringify({ header: true, columns });
+  tasks.forEach(task => stringifier.write(task));
+  stringifier.pipe(writableStream);
+}
+
 // API Endpoints
 app.get('/api/tasks', (req, res) => {
-  res.json(tasks.filter(t => !t.deleted));
-  serverTime: Date.now()
+  res.json({
+    tasks: tasks.filter(t => !t.deleted),
+    serverTime: Date.now(),
+    timeSettings // Отправляем настройки времени на фронтенд
+  });
 });
 
 app.post('/api/tasks', (req, res) => {
@@ -50,6 +75,7 @@ app.post('/api/tasks', (req, res) => {
   };
   tasks.push(task);
   fs.writeFileSync('tasks.json', JSON.stringify(tasks));
+  saveTasksToCSV(); // Сохраняем задачи в CSV
   res.status(201).json(task);
 });
 
@@ -65,6 +91,7 @@ app.patch('/api/tasks/:id', (req, res) => {
     return t;
   });
   fs.writeFileSync('tasks.json', JSON.stringify(tasks));
+  saveTasksToCSV(); // Сохраняем задачи в CSV
   res.sendStatus(200);
 });
 
@@ -73,8 +100,10 @@ app.delete('/api/tasks/:id', (req, res) => {
     t.id === parseInt(req.params.id) ? { ...t, deleted: true } : t
   );
   fs.writeFileSync('tasks.json', JSON.stringify(tasks));
+  saveTasksToCSV(); // Сохраняем задачи в CSV
   res.sendStatus(200);
 });
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Сервер доступен по адресу: http://192.168.0.156:${PORT}`);
   console.log(`Локальный доступ: http://localhost:${PORT}`);

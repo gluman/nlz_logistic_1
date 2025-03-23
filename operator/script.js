@@ -47,33 +47,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Обновление списка заданий
   const updateOperatorTasks = async () => {
-    const response = await fetch('http://192.168.0.156:3000/api/tasks');
-    const tasks = await response.json();
-    const now = Date.now();
+    try {
+      const response = await fetch('http://192.168.0.156:3000/api/tasks');
+      const data = await response.json();
+      const activeTasks = data.tasks.filter(t => t.status === 'active');
+      const serverTime = data.serverTime;
+      const now = Date.now();
+      const timeDelta = now - serverTime;
 
-    const timeDelta = now - serverTime;
+      document.getElementById('operatorTasks').innerHTML = activeTasks
+        .map(t => {
+          const created = new Date(t.timestamp).getTime();
+          const diff = Math.max(0, Math.floor((now - created - timeDelta) / 1000));
+          
+          return `
+            <div class="task-item">
+              <div>Блок ${t.block} → Стержень ${t.rod} → РМ ${t.operator}</div>
+              <div class="timer">${Math.floor(diff/60).toString().padStart(2, '0')}:${(diff%60).toString().padStart(2, '0')}</div>
+              <button class="delete-btn" data-id="${t.id}">❌ Удалить</button>
+            </div>
+          `;
+        }).join('');
 
-    document.getElementById('operatorTasks').innerHTML = tasks
-      .filter(t => !t.deleted && t.status === 'active')
-      .map(t => {
-        const created = new Date(t.timestamp).getTime();
-        const diff = Math.max(0, Math.floor((now - created - timeDelta) / 1000));
-        
-        return `
-          <div class="task-item">
-            <div>РМ ${t.operator} → Блок ${t.block} → Стержень ${t.rod}</div>
-            <div class="timer">${Math.floor(diff/60).toString().padStart(2, '0')}:${(diff%60).toString().padStart(2, '0')}</div>
-            <button class="delete-btn" data-id="${t.id}">❌ Удалить</button>
-          </div>
-        `;
-      }).join('');
-
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        await fetch(`http://192.168.0.156:3000/api/tasks/${btn.dataset.id}`, { method: 'DELETE' });
-        updateOperatorTasks();
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await fetch(`http://192.168.0.156:3000/api/tasks/${btn.dataset.id}`, { method: 'DELETE' });
+          updateOperatorTasks();
+        });
       });
-    });
+    } catch (error) {
+      console.error('Ошибка обновления:', error);
+    }
   };
 
   setInterval(updateOperatorTasks, 1000);
