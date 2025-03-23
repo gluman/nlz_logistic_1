@@ -1,30 +1,46 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const updateTasks = async () => {
-        const response = await fetch('http://localhost:3000/api/tasks');
-        const tasks = await response.json();
+  const updateTasks = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/tasks');
+      const tasks = await response.json();
+      const now = Date.now();
+      
+      document.getElementById('driverTasks').innerHTML = tasks.map(t => {
+        const created = new Date(t.timestamp);
+        const diff = Math.floor((now - created) / 1000);
+        const mins = Math.floor(diff / 60);
+        const secs = diff % 60;
         
-        document.getElementById('driverTasks').innerHTML = tasks
-            .filter(t => !t.completed)
-            .map(t => `
-                <div class="task-item driver">
-                    <div>
-                        РМ ${t.operator} → 
-                        Блок: ${t.block} → 
-                        Стержень: ${t.rod}
-                    </div>
-                    <div class="timer">${new Date(t.timestamp).toLocaleString()}</div>
-                    <button class="complete-btn" data-id="${t.id}">✅ Выполнено</button>
-                </div>
-            `).join('');
+        return `
+          <div class="task-item ${mins >= 2 ? 'alert' : mins >= 1 ? 'warning' : ''}">
+            <div>РМ ${t.operator} | Блок ${t.block} | Стержень ${t.rod}</div>
+            <div class="timer">${mins}:${secs.toString().padStart(2, '0')}</div>
+            <button class="status-btn status-working" 
+              data-id="${t.id}" 
+              data-status="В работе">Работа</button>
+            <button class="status-btn status-completed" 
+              data-id="${t.id}" 
+              data-status="Выполнено">Готово</button>
+          </div>
+        `;
+      }).join('');
 
-        document.querySelectorAll('.complete-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                await fetch(`http://localhost:3000/api/tasks/${btn.dataset.id}`, {method: 'PATCH'});
-                updateTasks();
-            });
+      document.querySelectorAll('.status-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await fetch(`http://localhost:3000/api/tasks/${btn.dataset.id}`, {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({status: btn.dataset.status})
+          });
+          updateTasks();
         });
-    };
+      });
 
-    setInterval(updateTasks, 2000);
-    updateTasks();
+    } catch (error) {
+      console.error('Ошибка:', error);
+    }
+  };
+
+  setInterval(updateTasks, 1000);
+  updateTasks();
 });

@@ -1,120 +1,76 @@
-/* style.css */
-.operator_list, .block_list, .tara {
+/* Общие стили */
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Выбор элементов */
+  .operator_list, .block_list, .tara {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin: 20px 0;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.operator, .block, .num_st {
-    padding: 10px 15px;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 8px;
+  }
+  
+  .operator, .block, .num_st {
+    padding: 12px 20px;
     border: 2px solid #4CAF50;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: all 0.3s;
-    text-align: center;
-}
-
-.operator.selected, .block.selected, .num_st.selected {
-    background-color: #4CAF50;
+    transition: all 0.2s;
+  }
+  
+  .selected {
+    background: #4CAF50 !important;
     color: white;
-}
-
-.tasks-list {
-    margin-top: 40px;
-    padding: 20px;
-    background: #f8f8f8;
-    border-radius: 10px;
-}
-
-.task-item {
+  }
+  
+  /* Задания */
+  .task-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 20px;
     padding: 15px;
     margin: 10px 0;
     background: white;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.remove-btn {
-    background: #ff4444;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 3px;
-    cursor: pointer;
-}
-
-.timer {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .timer {
     font-family: monospace;
-    color: #666;
-}
-.task-item.warning {
-    background: #fff3cd;
-    border-left: 4px solid #ffc107;
-}
-
-.task-item.alert {
-    background: #f8d7da;
-    border-left: 4px solid #dc3545;
-}
-.task-item.driver {
-    background: #e9f5ff;
-}
-
-.complete-btn {
-    background: #28a745;
+    padding: 6px 12px;
+    border-radius: 4px;
+    background: #f0f0f0;
+  }
+  
+  /* Цветовая индикация */
+  .task-item.warning { background: #fff3cd; }
+  .task-item.alert { background: #f8d7da; }
+  
+  /* Кнопки статусов */
+  .status-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .status-working { background: #4CAF50; color: white; }
+  .status-completed { background: #2196F3; color: white; }
+  
+  /* Экспорт */
+  #exportBtn, #exportOperatorBtn {
+    padding: 10px 20px;
+    background: #17a2b8;
     color: white;
     border: none;
-    padding: 5px 15px;
-    border-radius: 3px;
+    border-radius: 5px;
     cursor: pointer;
-}
-
-#exportBtn {
     margin-top: 20px;
-    padding: 10px 20px;
-    background: #17a2b8;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.operator_list, .block_list, .tara {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 20px 0;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.operator, .block, .num_st {
-    padding: 10px 15px;
-    border: 2px solid #4CAF50;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-align: center;
-}
-
-.selected {
-    background-color: #4CAF50 !important;
-    color: white;
-}
-
-#exportOperatorBtn {
-    margin: 20px 0;
-    padding: 10px 20px;
-    background: #17a2b8;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+  }
