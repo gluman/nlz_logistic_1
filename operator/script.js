@@ -51,15 +51,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const tasks = await response.json();
     const now = Date.now();
 
+    const timeDelta = now - serverTime;
+
     document.getElementById('operatorTasks').innerHTML = tasks
       .filter(t => !t.deleted && t.status === 'active')
       .map(t => {
-        const created = new Date(t.timestamp);
-        const diff = Math.floor((now - created) / 1000);
+        const created = new Date(t.timestamp).getTime();
+        const diff = Math.max(0, Math.floor((now - created - timeDelta) / 1000));
+        
         return `
           <div class="task-item">
             <div>РМ ${t.operator} → Блок ${t.block} → Стержень ${t.rod}</div>
-            <div class="timer">${Math.floor(diff/60)}:${(diff%60).toString().padStart(2, '0')}</div>
+            <div class="timer">${Math.floor(diff/60).toString().padStart(2, '0')}:${(diff%60).toString().padStart(2, '0')}</div>
             <button class="delete-btn" data-id="${t.id}">❌ Удалить</button>
           </div>
         `;

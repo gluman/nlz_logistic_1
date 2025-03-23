@@ -36,6 +36,7 @@ try {
 // API Endpoints
 app.get('/api/tasks', (req, res) => {
   res.json(tasks.filter(t => !t.deleted));
+  serverTime: Date.now()
 });
 
 app.post('/api/tasks', (req, res) => {
