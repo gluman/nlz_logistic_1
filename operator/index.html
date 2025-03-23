@@ -8,10 +8,10 @@
 </head>
 <body>
   <div class="container">
-    <h1>НЛЗ. Стержневой участок</h1>
+    <h1>НЛЗ. Стежневой участок. АРМ Оператора</h1>
     <button id="exportOperatorBtn">Экспорт (CSV)</button>
-    
-    <h2>Выбор РМ:</h2>
+
+    <h2>Выбрать РМ:</h2>
     <div class="operator_list">
       <div class="operator" value="1">РМ 1</div>
       <div class="operator" value="2">РМ 2</div>
@@ -19,19 +19,23 @@
       <div class="operator" value="4">РМ 4</div>
     </div>
 
-    <h2>Выбор блока:</h2>
+    <h2>Выбрать блок:</h2>
     <div class="block_list">
       <div class="block" value="A274">A274</div>
       <div class="block" value="4216">4216</div>
       <div class="block" value="240">240</div>
     </div>
 
-    <h2>Стержни:</h2>
+    <h2>Выбрать стержень:</h2>
     <div class="tara">
       <div class="num_st 4216">1</div>
       <div class="num_st 4216">2</div>
+      <div class="num_st 4216">3</div>
       <!-- ... остальные стержни ... -->
     </div>
+
+    <h2>Активные задания:</h2>
+    <div class="tasks-list" id="operatorTasks"></div>
   </div>
   <script src="script.js"></script>
 </body>

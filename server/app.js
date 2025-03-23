@@ -11,10 +11,9 @@ app.use(express.json());
 // Ежедневный бэкап
 function backupTasks() {
   const date = new Date().toISOString().split('T')[0];
-  const backupFile = path.join(__dirname, `tasks_${date}.json`);
-  
-  if (!fs.existsSync(backupFile)) {
-    fs.copyFileSync('tasks.json', backupFile);
+  const backupPath = path.join(__dirname, `tasks_${date}.json`);
+  if (!fs.existsSync(backupPath)) {
+    fs.copyFileSync('tasks.json', backupPath);
   }
 }
 setInterval(backupTasks, 24 * 60 * 60 * 1000);
@@ -26,9 +25,9 @@ try {
   fs.writeFileSync('tasks.json', '[]');
 }
 
-// API
+// API Endpoints
 app.get('/api/tasks', (req, res) => {
-  res.json(tasks);
+  res.json(tasks.filter(t => !t.deleted));
 });
 
 app.post('/api/tasks', (req, res) => {
@@ -36,7 +35,9 @@ app.post('/api/tasks', (req, res) => {
     ...req.body,
     id: Date.now(),
     timestamp: new Date().toISOString(),
-    status: 'В работе'
+    status: "active",
+    deleted: false,
+    completedAt: null
   };
   tasks.push(task);
   fs.writeFileSync('tasks.json', JSON.stringify(tasks));
@@ -44,8 +45,23 @@ app.post('/api/tasks', (req, res) => {
 });
 
 app.patch('/api/tasks/:id', (req, res) => {
+  tasks = tasks.map(t => {
+    if (t.id === parseInt(req.params.id)) {
+      return { 
+        ...t, 
+        status: req.body.status,
+        completedAt: req.body.status === "completed" ? new Date().toISOString() : null
+      };
+    }
+    return t;
+  });
+  fs.writeFileSync('tasks.json', JSON.stringify(tasks));
+  res.sendStatus(200);
+});
+
+app.delete('/api/tasks/:id', (req, res) => {
   tasks = tasks.map(t => 
-    t.id === parseInt(req.params.id) ? {...t, status: req.body.status} : t
+    t.id === parseInt(req.params.id) ? { ...t, deleted: true } : t
   );
   fs.writeFileSync('tasks.json', JSON.stringify(tasks));
   res.sendStatus(200);

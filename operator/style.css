@@ -1,20 +1,22 @@
-/* Общие стили */
 body {
     font-family: Arial, sans-serif;
     padding: 20px;
+    background: #f0f0f0;
+  }
+  
+  .container {
     max-width: 1200px;
     margin: 0 auto;
   }
   
-  /* Выбор элементов */
   .operator_list, .block_list, .tara {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin: 20px 0;
     padding: 15px;
-    background: #f5f5f5;
+    background: white;
     border-radius: 8px;
+    margin: 20px 0;
   }
   
   .operator, .block, .num_st {
@@ -22,15 +24,14 @@ body {
     border: 2px solid #4CAF50;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: 0.2s;
   }
   
   .selected {
     background: #4CAF50 !important;
-    color: white;
+    color: white !important;
   }
   
-  /* Задания */
   .task-item {
     display: flex;
     align-items: center;
@@ -45,32 +46,27 @@ body {
   .timer {
     font-family: monospace;
     padding: 6px 12px;
+    background: #f8f8f8;
     border-radius: 4px;
-    background: #f0f0f0;
   }
   
-  /* Цветовая индикация */
-  .task-item.warning { background: #fff3cd; }
-  .task-item.alert { background: #f8d7da; }
-  
-  /* Кнопки статусов */
-  .status-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .status-working { background: #4CAF50; color: white; }
-  .status-completed { background: #2196F3; color: white; }
-  
-  /* Экспорт */
-  #exportBtn, #exportOperatorBtn {
-    padding: 10px 20px;
-    background: #17a2b8;
+  .delete-btn {
+    background: #ff4444;
     color: white;
     border: none;
-    border-radius: 5px;
+    padding: 8px 16px;
+    border-radius: 4px;
     cursor: pointer;
-    margin-top: 20px;
   }
+  
+  .complete-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .warning { background: #fff3cd; }
+  .alert { background: #f8d7da; }

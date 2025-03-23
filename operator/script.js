@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Выбор стержня
+  // Создание задания
   document.querySelectorAll('.num_st').forEach(el => {
     el.addEventListener('click', async () => {
       if (!selectedOperator || !selectedBlock) {
@@ -28,37 +28,51 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      document.querySelectorAll('.num_st').forEach(r => r.classList.remove('selected'));
-      el.classList.add('selected');
-      
       const response = await fetch('http://localhost:3000/api/tasks', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           operator: selectedOperator,
           block: selectedBlock,
-          rod: el.textContent
+          rod: el.textContent.trim()
         })
       });
 
       if (response.ok) {
         alert('Задание создано!');
-        el.classList.remove('selected');
+        updateOperatorTasks();
       }
     });
   });
 
-  // Экспорт
-  document.getElementById('exportOperatorBtn').addEventListener('click', () => {
-    const csv = tasks.map(t => 
-      `${t.operator},${t.block},${t.rod},${t.status},${new Date(t.timestamp).toLocaleString()}`
-    ).join('\n');
-    
-    const blob = new Blob([csv], {type: 'text/csv'});
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `tasks_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-  });
+  // Обновление списка заданий
+  const updateOperatorTasks = async () => {
+    const response = await fetch('http://localhost:3000/api/tasks');
+    const tasks = await response.json();
+    const now = Date.now();
+
+    document.getElementById('operatorTasks').innerHTML = tasks
+      .filter(t => !t.deleted && t.status === 'active')
+      .map(t => {
+        const created = new Date(t.timestamp);
+        const diff = Math.floor((now - created) / 1000);
+        return `
+          <div class="task-item">
+            <div>РМ ${t.operator} → Блок ${t.block} → Стержень ${t.rod}</div>
+            <div class="timer">${Math.floor(diff/60)}:${(diff%60).toString().padStart(2, '0')}</div>
+            <button class="delete-btn" data-id="${t.id}">❌ Удалить</button>
+          </div>
+        `;
+      }).join('');
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await fetch(`http://localhost:3000/api/tasks/${btn.dataset.id}`, { method: 'DELETE' });
+        updateOperatorTasks();
+      });
+    });
+  };
+
+  setInterval(updateOperatorTasks, 1000);
+  updateOperatorTasks();
 });
