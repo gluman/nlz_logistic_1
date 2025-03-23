@@ -1,8 +1,16 @@
 const express = require('express');
+const cors = require('cors'); // Добавлен CORS
 const fs = require('fs');
 const path = require('path');
 const app = express();
 const PORT = 3000;
+
+// Настройка CORS
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PATCH', 'DELETE']
+}));
+app.options('*', cors()); // Обработка предварительных запросов
 
 app.use(express.static(path.join(__dirname, '../operator')));
 app.use(express.static(path.join(__dirname, '../driver')));
