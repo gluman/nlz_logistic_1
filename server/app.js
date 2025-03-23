@@ -74,5 +74,7 @@ app.delete('/api/tasks/:id', (req, res) => {
   fs.writeFileSync('tasks.json', JSON.stringify(tasks));
   res.sendStatus(200);
 });
-
-app.listen(PORT, () => console.log(`Сервер запущен: http://localhost:${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Сервер доступен по адресу: http://192.168.0.156:${PORT}`);
+  console.log(`Локальный доступ: http://localhost:${PORT}`);
+});

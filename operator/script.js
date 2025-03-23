@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const response = await fetch('http://localhost:3000/api/tasks', {
+      const response = await fetch('http://192.168.0.156:3000/api/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Обновление списка заданий
   const updateOperatorTasks = async () => {
-    const response = await fetch('http://localhost:3000/api/tasks');
+    const response = await fetch('http://192.168.0.156:3000/api/tasks');
     const tasks = await response.json();
     const now = Date.now();
 
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.delete-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
-        await fetch(`http://localhost:3000/api/tasks/${btn.dataset.id}`, { method: 'DELETE' });
+        await fetch(`http://192.168.0.156:3000/api/tasks/${btn.dataset.id}`, { method: 'DELETE' });
         updateOperatorTasks();
       });
     });

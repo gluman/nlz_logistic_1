@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const updateDriverTasks = async () => {
-    const response = await fetch('http://localhost:3000/api/tasks');
+    const response = await fetch('http://192.168.0.156:3000/api/tasks');
     const tasks = await response.json();
     const now = Date.now();
 
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.complete-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
-        await fetch(`http://localhost:3000/api/tasks/${btn.dataset.id}`, {
+        await fetch(`http://192.168.0.156:3000/api/tasks/${btn.dataset.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: 'completed' })
