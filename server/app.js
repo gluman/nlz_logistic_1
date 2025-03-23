@@ -2,9 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-const { stringify } = require('csv-stringify'); // Для записи в CSV
+const { stringify } = require('csv-stringify');
 const app = express();
-const PORT = 3000;
+
+// Загрузка настроек сети из config.json
+const config = JSON.parse(fs.readFileSync('config.json'));
+const { ip, port } = config.server;
 
 // Настройка CORS
 app.use(cors({
@@ -104,7 +107,8 @@ app.delete('/api/tasks/:id', (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Сервер доступен по адресу: http://192.168.0.156:${PORT}`);
-  console.log(`Локальный доступ: http://localhost:${PORT}`);
+// Запуск сервера с настройками из config.json
+app.listen(port, ip, () => {
+  console.log(`Сервер доступен по адресу: http://${ip}:${port}`);
+  console.log(`Локальный доступ: http://localhost:${port}`);
 });
