@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Загрузка настроек сети
-  fetch('config.json')
+  fetch('/config.json')
     .then(response => response.json())
     .then(config => {
       const { ip, port } = config.server;

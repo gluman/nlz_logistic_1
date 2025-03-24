@@ -5,8 +5,9 @@ const path = require('path');
 const { stringify } = require('csv-stringify');
 const app = express();
 
+
 // Загрузка настроек сети из config.json
-const config = JSON.parse(fs.readFileSync('config.json'));
+const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'public/config.json')));
 const { ip, port } = config.server;
 
 // Настройка CORS
@@ -112,3 +113,5 @@ app.listen(port, ip, () => {
   console.log(`Сервер доступен по адресу: http://${ip}:${port}`);
   console.log(`Локальный доступ: http://localhost:${port}`);
 });
+
+app.use(express.static(path.join(__dirname, 'public')));

@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedBlock = null;
 
   // Загрузка настроек сети
-  fetch('config.json')
+  fetch("/config.json")
     .then(response => response.json())
     .then(config => {
       const { ip, port } = config.server;
@@ -11,48 +11,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Выбор РМ
       document.querySelectorAll('.operator').forEach(el => {
-        el.addEventListener('click', () => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
           document.querySelectorAll('.operator').forEach(o => o.classList.remove('selected'));
           el.classList.add('selected');
           selectedOperator = el.getAttribute('value');
+          console.log('Выбран оператор:', selectedOperator); // Логирование для отладки
         });
       });
 
       // Выбор блока
       document.querySelectorAll('.block').forEach(el => {
-        el.addEventListener('click', () => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
           document.querySelectorAll('.block').forEach(b => b.classList.remove('selected'));
           el.classList.add('selected');
           selectedBlock = el.getAttribute('value');
+          console.log('Выбран блок:', selectedBlock); // Логирование для отладки
         });
       });
 
       // Создание задания
       document.querySelectorAll('.num_st').forEach(el => {
-        el.addEventListener('click', async () => {
-          if (!selectedOperator || !selectedBlock) {
-            alert('Сначала выберите РМ и блок!');
+        el.addEventListener('click', async (e) => {
+          e.preventDefault();
+          
+          if (!selectedOperator) {
+            alert('Сначала выберите РМ!');
+            return;
+          }
+          
+          if (!selectedBlock) {
+            alert('Сначала выберите блок!');
             return;
           }
 
-          const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              operator: selectedOperator,
-              block: selectedBlock,
-              rod: el.textContent.trim()
-            })
-          });
+          const rodNumber = el.textContent.trim();
+          console.log(`Попытка создания задания: РМ ${selectedOperator}, блок ${selectedBlock}, стержень ${rodNumber}`);
 
-          if (response.ok) {
-            alert('Задание создано!');
-            updateOperatorTasks();
+          try {
+            const response = await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                operator: selectedOperator,
+                block: selectedBlock,
+                rod: rodNumber,
+                status: 'active'
+              })
+            });
+
+            if (response.ok) {
+              const newTask = await response.json();
+              console.log('Задание создано:', newTask);
+              updateOperatorTasks();
+            } else {
+              const error = await response.json();
+              console.error('Ошибка сервера:', error);
+              alert('Ошибка при создании задания: ' + (error.message || 'неизвестная ошибка'));
+            }
+          } catch (error) {
+            console.error('Ошибка сети:', error);
+            alert('Ошибка сети при создании задания');
           }
         });
       });
 
-      // Обновление списка заданий
+      // ... остальной код (экспорт, обновление задач и т.д.)
       const updateOperatorTasks = async () => {
         try {
           const response = await fetch(apiUrl);
@@ -77,9 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }).join('');
 
           document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-              await fetch(`${apiUrl}/${btn.dataset.id}`, { method: 'DELETE' });
-              updateOperatorTasks();
+            btn.addEventListener('click', async (e) => {
+              e.preventDefault();
+              try {
+                await fetch(`${apiUrl}/${btn.dataset.id}`, { method: 'DELETE' });
+                updateOperatorTasks();
+              } catch (error) {
+                console.error('Ошибка удаления:', error);
+              }
             });
           });
         } catch (error) {
@@ -90,5 +120,15 @@ document.addEventListener('DOMContentLoaded', () => {
       setInterval(updateOperatorTasks, 1000);
       updateOperatorTasks();
     })
-    .catch(error => console.error('Ошибка загрузки настроек сети:', error));
+    .catch(error => {
+      console.error('Ошибка загрузки настроек сети:', error);
+      alert('Ошибка загрузки конфигурации сервера');
+    });
 });
+
+// const debugBtn = document.createElement('button');
+// debugBtn.textContent = 'Проверить выбор';
+// debugBtn.addEventListener('click', () => {
+//   alert(`Выбрано: РМ ${selectedOperator}, Блок ${selectedBlock}`);
+// });
+// document.body.prepend(debugBtn);
